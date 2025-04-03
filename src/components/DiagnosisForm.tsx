@@ -4,9 +4,7 @@ import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
 import axios from "axios";
 
-interface DiagnosisFormProps {
-  backendUrl: string; // URL of the backend API
-}
+const backendUrl = "https://multi-disease-predictor-backend.onrender.com"; // Backend API URL
 
 const questions = [
   { id: 'age', label: 'Age', type: 'number', required: true },
@@ -22,7 +20,7 @@ const questions = [
   { id: 'folate', label: 'Folate Level (ng/mL)', type: 'number', required: true },
 ];
 
-export default function DiagnosisForm({ backendUrl }: DiagnosisFormProps) {
+export default function DiagnosisForm() {
   const [formData, setFormData] = useState<Record<string, any>>({});
   const [images, setImages] = useState<File[]>([]);
   const [loading, setLoading] = useState(false);
@@ -78,7 +76,26 @@ export default function DiagnosisForm({ backendUrl }: DiagnosisFormProps) {
                     <label htmlFor={question.id} className="block text-sm font-medium text-gray-700">
                       {question.label} {question.required && <span className="text-red-500">*</span>}
                     </label>
-                    <input type={question.type} id={question.id} className="w-full border p-2 rounded" onChange={(e) => handleInputChange(question.id, e.target.value)} required={question.required} />
+                    {question.type === 'select' ? (
+                        <select
+                            id={question.id}
+                            className="w-full border p-2 rounded"
+                            onChange={(e) => handleInputChange(question.id, e.target.value)}
+                            required={question.required}
+                        >
+                          {question.options?.map(option => (
+                              <option key={option} value={option}>{option}</option>
+                          ))}
+                        </select>
+                    ) : (
+                        <input
+                            type={question.type}
+                            id={question.id}
+                            className="w-full border p-2 rounded"
+                            onChange={(e) => handleInputChange(question.id, e.target.value)}
+                            required={question.required}
+                        />
+                    )}
                   </div>
               ))}
             </div>
