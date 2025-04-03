@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
 import axios from "axios";
 
-const backendUrl = "https://multi-disease-predictor-backend.onrender.com"; // Backend API URL
+const backendUrl = import.meta.env.VITE_BACKEND_URL;// Backend API URL
 
 const questions = [
   { id: 'age', label: 'Age', type: 'number', required: true },
