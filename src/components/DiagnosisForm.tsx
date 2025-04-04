@@ -4,7 +4,12 @@ import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
 import axios from "axios";
 
-const backendUrl = "https://multi-disease-predictor-backend.onrender.com"; // Backend API URL
+// Use environment variable for backend URL
+const backendUrl = import.meta.env.VITE_BACKEND_URL;
+
+if (!backendUrl) {
+  console.error("🚨 VITE_BACKEND_URL is not defined in the environment variables!");
+}
 
 const questions = [
   { id: 'age', label: 'Age', type: 'number', required: true },
@@ -37,32 +42,41 @@ export default function DiagnosisForm() {
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      const formDataToSend = new FormData();
-      Object.entries(formData).forEach(([key, value]) => {
-        formDataToSend.append(key, value as string);
-      });
-      images.forEach((image, index) => {
-        formDataToSend.append(`image_${index}`, image);
-      });
+        const formDataToSend = new FormData();
 
-      const response = await axios.post(`${backendUrl}/predict`, formDataToSend, {
-        headers: { 'Content-Type': 'multipart/form-data' }
-      });
+        // Ensure fields are properly appended
+        Object.entries(formData).forEach(([key, value]) => {
+            if (typeof value === 'string' || typeof value === 'number') {
+                formDataToSend.append(key, value.toString());
+            }
+        });
 
-      toast.success('Prediction successful!');
-      console.log(response.data);
-    } catch (error) {
-      toast.error('Error fetching prediction');
-      console.error(error);
+        // Append images
+        images.forEach((image, index) => {
+            formDataToSend.append(`image_${index}`, image);
+        });
+
+        console.log("Sending Data:", Object.fromEntries(formDataToSend)); // Debugging
+
+        const response = await axios.post(`${backendUrl}/predict`, formDataToSend, {
+            headers: { 'Content-Type': 'multipart/form-data' },
+        });
+
+        toast.success('Prediction successful!');
+        console.log(response.data);
+    } catch (error: any) {
+        toast.error('Error fetching prediction');
+        console.error("API Error:", error.response?.data || error.message);
     }
 
     setLoading(false);
-  };
+};
+
 
   return (
       <div className="max-w-3xl mx-auto bg-white rounded-lg shadow-lg p-8">
