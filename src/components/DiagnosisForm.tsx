@@ -119,6 +119,13 @@ export default function DiagnosisForm() {
               {loading ? 'Submitting...' : 'Submit for Analysis'}
             </button>
           </form>
+          {predictionResult && (
+  <div className="mt-6 p-4 bg-green-100 border border-green-300 rounded">
+    <h3 className="text-lg font-semibold text-green-800">Prediction Result:</h3>
+    <p className="text-green-700">{predictionResult}</p>
+  </div>
+)}
+
         </motion.div>
       </div>
   );
