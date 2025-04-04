@@ -24,6 +24,8 @@ export default function DiagnosisForm() {
   const [formData, setFormData] = useState<Record<string, any>>({});
   const [images, setImages] = useState<File[]>([]);
   const [loading, setLoading] = useState(false);
+  const [predictionResult, setPredictionResult] = useState<string | null>(null);
+
 
   const handleInputChange = (id: string, value: string | number | string[]) => {
     setFormData(prev => ({ ...prev, [id]: value }));
@@ -40,6 +42,7 @@ export default function DiagnosisForm() {
   const handleSubmit = async (e: React.FormEvent) => {
   e.preventDefault();
   setLoading(true);
+  setPredictionResult(null); // reset previous result
 
   try {
     const formDataToSend = new FormData();
@@ -52,7 +55,7 @@ export default function DiagnosisForm() {
 
     const response = await fetch(`${import.meta.env.VITE_API_URL}/predict`, {
       method: "POST",
-      body: formDataToSend, // ✅ Use the correct FormData object here
+      body: formDataToSend,
     });
 
     if (!response.ok) {
@@ -60,8 +63,9 @@ export default function DiagnosisForm() {
     }
 
     const data = await response.json();
-    console.log(data); // 🔍 Use the result
+    console.log(data);
     toast.success("Prediction successful!");
+    setPredictionResult(data.prediction); // 👈 adjust based on your backend response
   } catch (error) {
     toast.error("Error fetching prediction");
     console.error(error);
@@ -69,6 +73,7 @@ export default function DiagnosisForm() {
     setLoading(false);
   }
 };
+
 
 
   return (
