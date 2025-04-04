@@ -38,31 +38,38 @@ export default function DiagnosisForm() {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
+  e.preventDefault();
+  setLoading(true);
 
-    try {
-      const formDataToSend = new FormData();
-      Object.entries(formData).forEach(([key, value]) => {
-        formDataToSend.append(key, value as string);
-      });
-      images.forEach((image, index) => {
-        formDataToSend.append(`image_${index}`, image);
-      });
+  try {
+    const formDataToSend = new FormData();
+    Object.entries(formData).forEach(([key, value]) => {
+      formDataToSend.append(key, value as string);
+    });
+    images.forEach((image, index) => {
+      formDataToSend.append(`image_${index}`, image);
+    });
 
-      const response = await axios.post(`${backendUrl}/predict`, formDataToSend, {
-        headers: { 'Content-Type': 'multipart/form-data' }
-      });
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/predict`, {
+      method: "POST",
+      body: formDataToSend, // ✅ Use the correct FormData object here
+    });
 
-      toast.success('Prediction successful!');
-      console.log(response.data);
-    } catch (error) {
-      toast.error('Error fetching prediction');
-      console.error(error);
+    if (!response.ok) {
+      throw new Error("Network response was not ok");
     }
 
+    const data = await response.json();
+    console.log(data); // 🔍 Use the result
+    toast.success("Prediction successful!");
+  } catch (error) {
+    toast.error("Error fetching prediction");
+    console.error(error);
+  } finally {
     setLoading(false);
-  };
+  }
+};
+
 
   return (
       <div className="max-w-3xl mx-auto bg-white rounded-lg shadow-lg p-8">
