@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "homepage": "https://github.com/sahooananya.github.io/disease-predictor-frontend.git", 
+  "homepage": "https://sahooananya.github.io/disease-predictor-frontend.git", 
   "scripts": {
     "start": "vite",
     "dev": "vite",
