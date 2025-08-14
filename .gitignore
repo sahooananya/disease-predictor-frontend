@@ -22,4 +22,15 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Environment variables (you already have this)
 .env
+
+# Optional additions
+.env.local
+.env.production
+.env.staging
+coverage/
+*.tgz
+*.tar.gz
+.cache/
